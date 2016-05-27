@@ -204,6 +204,7 @@ public class Main extends JPanel {
 			g.setColor(Color.GRAY);
 			g.fillRect(0, 0, getSize().width, getSize().height);
 			DrawWall.drawBlocks(g);
+			DrawPlayer.drawPlayer(g);
 		}
 		repaint();
 	}
