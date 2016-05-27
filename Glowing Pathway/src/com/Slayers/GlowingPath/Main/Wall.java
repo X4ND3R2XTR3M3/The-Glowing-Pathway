@@ -22,7 +22,6 @@ public class Wall {
 	}
 	
 	public void setType(int ltype) {
-		System.out.println("Setting Block Types...");
 		type=ltype;
 		BlockImage = Block_Images.getBlockRes(type);
 	}
