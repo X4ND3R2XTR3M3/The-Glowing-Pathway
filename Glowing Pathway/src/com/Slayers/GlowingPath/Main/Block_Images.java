@@ -9,6 +9,9 @@ public class Block_Images {
 		if(type == 1) {
 			return WallImage.getWall();
 		}
+		if(type == 2) {
+			return StairImage.getStair();
+		}
 		return null;
 	}
 }

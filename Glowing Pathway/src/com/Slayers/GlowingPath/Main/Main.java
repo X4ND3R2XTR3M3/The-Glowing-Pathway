@@ -18,10 +18,12 @@ public class Main extends JPanel {
 
 	private static final long serialVersionUID = 4239857866088994254L;
 	public static Display f = new Display();
-	public static int w, h, scene, tileSize = 32, bosX, bosY;
+	public static int w, h, scene, level, tileSize = 32, bosX, bosY, loadingC = 255;
 	public static Font retroF = null;
 	public static MouseTest mt = new MouseTest();
-	public static boolean music = true, musicplaying = false, loadT = false;
+	public static KeyTest kt = new KeyTest();
+	public static boolean music = true, musicplaying = false, loadT = false, portalFound = false, drawQuestion = false;
+	public static Color carpet = Color.GRAY;
 	
 	
 	public Main() {
@@ -74,12 +76,13 @@ public class Main extends JPanel {
                 }
             }
         });
-		
+		kt = new KeyTest();
 		mt = new MouseTest();
 		mt.init();
+		kt.init();
 		f.addMouseListener(mt);
 		f.addMouseMotionListener(mt);
-		
+		f.addKeyListener(kt);
 		scene=0;
 	}
 	
@@ -93,7 +96,7 @@ public class Main extends JPanel {
 			String begin = "Begin";
 			int sw = fm.stringWidth(begin);
 			int sh = fm.getHeight();
-			retroF = new Font(Font.SANS_SERIF, Font.BOLD, 50);
+			retroF = AddFont.createFont("8-bit.ttf", 50);
 			g.setColor(Color.WHITE);
 			if (checkHover((getSize().width - sw) / 2, getSize().height / 2, (getSize().width - sw) / 2 + sw,
 					getSize().height / 2 + sh)) {
@@ -108,21 +111,6 @@ public class Main extends JPanel {
 			g.setColor(Color.WHITE);
 			g.drawString(gp, (getSize().width - gpw/5) / 2, getSize().height-100);
 			g.drawString(bx, (getSize().width - gpw/10) / 2, getSize().height-75);
-			/*
-			Color c = new Color(255, 255, 255, 0);
-			g.setColor(c);
-			g.drawRect((getSize().width - sw) / 2, getSize().height /2, sw, sh - 100);
-			*/
-			if(music == false) {
-				Music.disposeMusic();
-				musicplaying = false;
-			}
-			if(music && (musicplaying == false)) {
-				System.out.println(this.getClass().getResourceAsStream("Button-Click.wav"));
-				String s = "Emotional Music - River of Tears (No Voice).mp3";
-				Music.playMusic(s);
-				musicplaying = true;
-			}
 			if (mt.Click || mt.RClick) {
 				if (checkClickButton((getSize().width - sw) / 2, getSize().height / 2, (getSize().width - sw) / 2 + sw,
 						getSize().height / 2 + sh)) {
@@ -142,7 +130,7 @@ public class Main extends JPanel {
 			String options = "Options";
 			int sw = fm.stringWidth(load);
 			int sh = fm.getHeight();
-			retroF = new Font(Font.SANS_SERIF, Font.BOLD, 50);
+			retroF = AddFont.createFont("8-bit.ttf", 50);
 			if (loadT) {
 				g.setColor(Color.WHITE);
 					if (checkHover((getSize().width - sw) / 2, getSize().height / 2, (getSize().width - sw) / 2 + sw,
@@ -164,19 +152,21 @@ public class Main extends JPanel {
 					getSize().height / 2 + sh + 100)) {
 				g.setColor(Color.YELLOW);
 			}
-			g.drawString(options, (getSize().width - sw) / 2 - 30, getSize().height / 2 + 100);
+			g.drawString(options, (getSize().width - sw) / 2 - 60, getSize().height / 2 + 100);
 			if (mt.Click || mt.RClick) {
 				//Load Button
 				if (checkClickButton((getSize().width - sw) / 2, getSize().height / 2, (getSize().width - sw) / 2 + sw,
 						getSize().height / 2 + sh) && loadT) {
-					scene=10;
+					scene=101;
+					level=1;
 					String s = "Button-Click.wav";
 					PlaySound.playSound(s);
 				}
 				//New Button
 				if (checkHover((getSize().width - sw) / 2 + 8, getSize().height / 2 - 100, (getSize().width - sw) / 2 + sw + 8,
 						getSize().height / 2 + sh - 100)) {
-					scene=10;
+					scene=101;
+					level=1;
 					String s = "Button-Click.wav";
 					PlaySound.playSound(s);
 				}
@@ -199,12 +189,94 @@ public class Main extends JPanel {
 			g.setColor(Color.BLUE);
 			g.drawString("TODO", getSize().width / 2, getSize().height / 2);
 		}
-		if (scene==10) {
-			Creation.create(1);
-			g.setColor(Color.GRAY);
+		if (scene==101&&level==1) {
+			if(loadingC>0){
+				loadingC--;
+			}
+			if (loadingC==0) {
+				scene=101;
+			}
+			if(music == false) {
+				Music.disposeMusic();
+				musicplaying = false;
+			}
+			if(music && (musicplaying == false)) {
+				System.out.println(this.getClass().getResourceAsStream("Button-Click.wav"));
+				String s = "Emotional Music - River of Tears (No Voice).mp3";
+				Music.playMusic(s);
+				musicplaying = true;
+			}
+			Creation.create(level);
+			g.setColor(carpet);
+			g.fillRect(0, 0, getSize().width, getSize().height);
+			DrawPlayer.drawPlayer(g);
+			DrawWall.drawBlocks(g);
+			retroF = new Font("SansSerif", Font.ITALIC, 50);
+			g.setFont(retroF);
+			g.drawString("The Story...", 20, 100);
+			Color c = new Color(0, 0, 0, loadingC);
+			g.setColor(c);
+			g.fillRect(0, 0, getSize().width, getSize().height);
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (loadingC==0) {
+				Player.updateCutScene();
+			}
+		}
+		if (scene==101&&level==2) {
+			Creation.create(level);
+			g.setColor(carpet);
 			g.fillRect(0, 0, getSize().width, getSize().height);
 			DrawWall.drawBlocks(g);
 			DrawPlayer.drawPlayer(g);
+			Player.updateCutScene();
+			g.setColor(Color.GRAY);
+			retroF = new Font("SansSerif", Font.ITALIC, 50);
+			g.setFont(retroF);
+			g.drawString("of a young man...", 20, 100);
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if (scene==101&&level==3) {
+			Creation.create(level);
+			g.setColor(carpet);
+			g.fillRect(0, 0, getSize().width, getSize().height);
+			DrawWall.drawBlocks(g);
+			DrawPlayer.drawPlayer(g);
+			Player.updateCutScene();
+			g.setColor(Color.GRAY);
+			retroF = new Font("SansSerif", Font.ITALIC, 50);
+			g.setFont(retroF);
+			g.drawString("and his life...", 20, 100);
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if (scene==101&&level==4) {
+			Creation.create(level);
+			g.setColor(carpet);
+			g.fillRect(0, 0, getSize().width, getSize().height);
+			DrawWall.drawBlocks(g);
+			DrawPlayer.drawPlayer(g);
+			Player.updateCutScene();
+			g.setColor(Color.GRAY);
+			retroF = new Font("SansSerif", Font.ITALIC, 50);
+			g.setFont(retroF);
+			g.drawString("who discovers the", 20, 100);
+			g.drawString("unthinkable...", 50, 150);
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		repaint();
 	}

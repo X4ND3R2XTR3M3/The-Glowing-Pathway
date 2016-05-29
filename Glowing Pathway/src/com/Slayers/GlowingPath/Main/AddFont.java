@@ -14,7 +14,7 @@ public class AddFont extends Main {
 	
 	public static Font createFont(String f, int s) {
 		try {
-			myStream = new BufferedInputStream(new FileInputStream(f));
+			myStream = new BufferedInputStream(new FileInputStream("src/"+f));
 			ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
 			telefraficoFont = ttfBase.deriveFont(Font.PLAIN, 50);
 		} catch (Exception e) {

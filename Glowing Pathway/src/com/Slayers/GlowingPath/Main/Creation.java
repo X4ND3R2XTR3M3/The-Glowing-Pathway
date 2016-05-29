@@ -15,5 +15,14 @@ public class Creation {
 		if (level==1) {
 			WorldGen.genLevel1();
 		}
+		if (level==2) {
+			WorldGen.genLevel2();
+		}
+		if (level==3) {
+			WorldGen.genLevel3();
+		}
+		if (level==4) {
+			WorldGen.genLevel4();
+		}
 	}
 }
